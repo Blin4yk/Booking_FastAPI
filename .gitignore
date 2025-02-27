@@ -3,8 +3,7 @@ venv/
 *.sqlite3
 test_data_db.sql
 alembic.ini
-migrations/
-!migrations/versions/
+
 logs/
 *.log
 *.bak
