@@ -36,17 +36,6 @@ def get_hotels(
 ):
     return bookingArgs
 
-class SBooking(BaseModel):
-    room_id: int
-    date_from: date
-    date_to: date
-    price: int
-
-
-@app.post("/bookings")
-def add_booking(booking: SBooking):
-    pass
-
 if __name__ == "__main__":
     uvicorn.run("main:app", reload=True)
 
