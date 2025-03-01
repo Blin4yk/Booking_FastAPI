@@ -18,14 +18,6 @@ class BookingService(BaseService):
         date_from: date,
         date_to: date
     ):
-        """
-        WITH booked_rooms AS (
-            SELECT * FROM bookings
-            WHERE room_id = 7 AND
-            (date_from >= '2023-06-25' AND date_from <= '2023-07-10') OR 
-            (date_from <= '2023-06-25' AND date_from >= '2023-06-25')
-        )      
-        """
         async with async_session_maker() as session:
             booked_rooms = select(Bookings).where(
                 and_(
@@ -42,12 +34,6 @@ class BookingService(BaseService):
                     )
                 )
             ).cte("booked_rooms") # with
-            """
-            SELECT rooms.quantity - COUNT(booked_rooms.id) from rooms
-            LEFT JOIN booked_rooms ON booked_rooms.room_id = rooms.id
-            WHERE rooms.id = 1
-            GROUP BY rooms.quantity, booked_rooms.room_id  
-            """
             get_rooms_left = select(
                 (Rooms.quantity - func.count(booked_rooms.c.id)).label("rooms_left")
                 ).select_from(Rooms).join(
