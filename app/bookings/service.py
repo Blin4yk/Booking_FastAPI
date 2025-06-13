@@ -1,5 +1,5 @@
 from datetime import date
-from sqlalchemy import and_, func, insert, or_, select, cte
+from sqlalchemy import and_, delete, func, insert, or_, select, cte
 from app.bookings.models import Bookings
 from app.database import async_session_maker, engine
 from app.hotels.rooms.models import Rooms
@@ -60,7 +60,35 @@ class BookingService(BaseService):
 
                 new_booking = await session.execute(add_booking)
                 await session.commit()
-                return new_booking.scalar() # Так как передаем модель Bookings полностью, то мы можем использовать  scalar() для возвращения модели
+                return new_booking.scalar_one_or_none() # Так как передаем модель Bookings полностью, то мы можем использовать  scalar() для возвращения модели
             else:
                 return None
-        
+            
+    @classmethod
+    async def delete(
+        cls,
+        user_id: int,
+        booking_id: int
+        ):
+        """
+        Удаление бронирования
+        @user_id - id пользователя
+        @booking_id - id брони
+        """
+        async with async_session_maker() as session:
+            delete_booking = delete(Bookings).where(
+                and_(
+                    Bookings.id == booking_id,
+                    Bookings.user_id == user_id
+                )
+            ).returning(Bookings)
+
+            del_booking = await session.execute(delete_booking)
+            await session.commit()
+            return del_booking.scalar()
+            
+
+
+
+
+    

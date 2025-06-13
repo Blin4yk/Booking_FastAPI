@@ -32,3 +32,11 @@ class UserIsNotPresent(BookingException): # <-- обязательно
 class RoomCanNotBeBooked(BookingException):
     status_code=status.HTTP_409_CONFLICT
     detail="Не осталось свободных номеров"
+
+class BookingCanNotDelete(BookingException):
+    status_code=status.HTTP_409_CONFLICT
+    detail="Нельзя отменить бронь"
+
+class HotelIsAbsent(BookingException):
+    status_code=status.HTTP_404_NOT_FOUND
+    detail="Отеля не существует"

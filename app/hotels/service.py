@@ -60,3 +60,17 @@ class HotelService(BaseService):
                 SHotels.model_validate({**hotel[0].__dict__, "rooms_left": hotel[1]})
                 for hotel in hotels
             ]
+        
+    @classmethod
+    async def get_hotel_info(
+        cls,
+        hotel_id: int
+    ):
+        async with async_session_maker() as session:
+            hotel = select(Hotels).where(
+                Hotels.id == hotel_id
+            )
+
+            result = await session.execute(hotel)
+            get_hotel = result.scalar()
+            return get_hotel
