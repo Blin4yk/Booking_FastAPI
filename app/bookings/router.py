@@ -1,16 +1,12 @@
 from datetime import date
-from fastapi import APIRouter, Depends, Request
-from sqlalchemy import select
 
-from app.bookings.models import Bookings
-from app.bookings.schemas import SBooking
+from fastapi import APIRouter, Depends
+from fastapi_cache.decorator import cache
+
 from app.bookings.service import BookingService
-from app.database import async_session_maker
 from app.exceptions import BookingCanNotDelete, RoomCanNotBeBooked
-from app.hotels.rooms.models import Rooms
 from app.users.dependencies import get_current_user
 from app.users.models import Users
-from app.users.service import UsersService
 
 router = APIRouter(
     prefix="/bookings",
@@ -18,6 +14,7 @@ router = APIRouter(
 )
 
 @router.get("")
+@cache(expire=60)
 async def get_bookings(user: Users = Depends(get_current_user)): #-> list[SBooking]:
     return await BookingService.find_all(user_id=user.id)
 
